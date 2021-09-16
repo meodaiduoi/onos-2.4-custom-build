@@ -43,7 +43,7 @@ jobs:
         run: |
           sudo ls
           pwd
-          sudo chmod 1777 tools
+          sudo chmod -R 1777 tools
           ls -l
           
 #       # Install Bazel build tool
