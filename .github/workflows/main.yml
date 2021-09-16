@@ -1,0 +1,67 @@
+# This is a basic workflow to help you get started with Actions
+
+name: 'CI onos 2.4'
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the onos-2.4 branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-18.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      # Setup java enviroment
+      - name: Setup Zulu 11 JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '11'
+      
+      # Add cache directory to build enviroment.
+      - name: Mount bazel cache
+        uses: actions/cache@v2
+        with:
+          path: "/home/runner/.cache/bazel"
+          key: bazel
+      
+      # Install Bazel build tool
+      - name: Add Bazel distribution URI as a package source
+        run: |
+          sudo apt install apt-transport-https curl gnupg
+          curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+          sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+          echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+      
+      - name: Install bazelisk
+        run: |
+          sudo apt update && sudo apt install bazel-3.4.1
+          bazel --version
+      
+      # Build onos using bazel
+      - name: Build Onos by Bazel
+        run: bazel build onos
+          
+      # archive for faster upload
+      - name: archive file for uploading
+        run: 7z a bazel-bin.7z bazel-bin\
+        
+      # Upload artifact
+      - uses: actions/upload-artifact@v2
+        with:
+          name: upload
+          path: bazel-bin.7z
