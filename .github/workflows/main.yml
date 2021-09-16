@@ -38,15 +38,12 @@ jobs:
         with:
           path: "/home/runner/.cache/bazel"
           key: bazel
-          
-      - name: chmod 
+      
+      # Fix permission error during build time
+      - name: workaround tools directory of onos
         run: |
-          sudo ls
-          pwd
           sudo chmod -R 777 tools/
           sudo chmod -R -t tools/
-          cd tools/package
-          ls -l
           
       # Install Bazel build tool
       - name: Add Bazel distribution URI as a package source
