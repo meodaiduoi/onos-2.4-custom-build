@@ -38,30 +38,35 @@ jobs:
         with:
           path: "/home/runner/.cache/bazel"
           key: bazel
-      
-      # Install Bazel build tool
-      - name: Add Bazel distribution URI as a package source
-        run: |
-          sudo apt install apt-transport-https curl gnupg
-          curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
-          sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
-          echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
-      
-      - name: Install bazelisk
-        run: |
-          sudo apt update && sudo apt install bazel-3.4.1
-          bazel --version
-      
-      # Build onos using bazel
-      - name: Build Onos by Bazel
-        run: bazel build onos
           
-      # archive for faster upload
-      - name: archive file for uploading
-        run: 7z a bazel-bin.7z bazel-bin\
+      - name: chmod 
+        run: |
+          sudo chmod 1777 tools
+          ls –l tools 
+      
+#       # Install Bazel build tool
+#       - name: Add Bazel distribution URI as a package source
+#         run: |
+#           sudo apt install apt-transport-https curl gnupg
+#           curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+#           sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+#           echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+      
+#       - name: Install bazelisk
+#         run: |
+#           sudo apt update && sudo apt install bazel-3.4.1
+#           bazel --version
+      
+#       # Build onos using bazel
+#       - name: Build Onos by Bazel
+#         run: bazel build onos
+          
+#       # archive for faster upload
+#       - name: archive file for uploading
+#         run: 7z a bazel-bin.7z bazel-bin\
         
-      # Upload artifact
-      - uses: actions/upload-artifact@v2
-        with:
-          name: upload
-          path: bazel-bin.7z
+#       # Upload artifact
+#       - uses: actions/upload-artifact@v2
+#         with:
+#           name: upload
+#           path: bazel-bin.7z
