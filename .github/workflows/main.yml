@@ -71,3 +71,15 @@ jobs:
         with:
           name: upload
           path: bazel-bin.7z
+      
+      
+      - uses: docker/setup-buildx-action@v1
+        id: buildx
+        with:
+          install: true
+      
+      # will run buildx
+      - name: Build docker image and Push
+        run: |
+          docker build -t onos-2.4-custom-build .
+          docker push meodaiduoi/onos-2.4-custom-build
